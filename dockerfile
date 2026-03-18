@@ -6,14 +6,18 @@ ENV CGO_ENABLED=0\
 
 WORKDIR /build
 
+COPY go.mod go.sum ./
+
+RUN go mod download
+
 COPY . .
 
-RUN go build -o /app .
+RUN go build -o /main .
 
 FROM alpine:3.21 AS final
 
-COPY --from=builder /app /bin/app
+COPY --from=builder /main /bin/main
 
 EXPOSE 8081
 
-CMD ["bin/app"]
+CMD ["bin/main"]
